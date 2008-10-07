@@ -5,5 +5,9 @@ module PJ
     def initialize
       @tracks = []
     end
+    
+    def <<(track)
+      @tracks << track
+    end
   end
 end
