@@ -70,8 +70,18 @@ describe PJ::Playlist do
       before :each do
         @filename = 'test_playlist.xml'
         @track_ids = [123, 456, 124, 987, 567, 321, 506]
+        @persistent_ids = {}
+        @track_info = {}
+        @track_ids.each do |tid|
+          @persistent_ids[tid] = "EAPERSIST#{tid}ID"
+          @track_info[tid.to_s] = {
+            'Track ID' => tid,
+            'Persistent ID' => @persistent_ids[tid]
+          }
+        end
         @name = 'Test Playlist Numero Uno'
         @parsed_data = {
+          'Tracks' => @track_info,
           'Playlists' => [
             {
               'Name' => @name,
@@ -109,6 +119,10 @@ describe PJ::Playlist do
       
       it 'should put the track objects in the order from the file' do
         PJ::Playlist.import(@filename).tracks.collect { |t|  t.track_id }.should == @track_ids
+      end
+      
+      it 'should set the persistent IDs for the track objects' do
+        PJ::Playlist.import(@filename).tracks.collect { |t|  t.persistent_id }.should == @persistent_ids.values_at(*@track_ids)
       end
     end
   end
