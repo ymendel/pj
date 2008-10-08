@@ -48,4 +48,52 @@ describe PJ::Playlist do
       @playlist.tracks.should == tracks + [@track]
     end
   end
+  
+  describe 'as a class' do
+    it 'should import a file' do
+      PJ::Playlist.should respond_to(:import)
+    end
+    
+    describe 'importing a file' do
+      before :each do
+        @filename = 'test_playlist.xml'
+        @track_ids = [123, 456, 124, 987, 567, 321, 506]
+        @name = 'Test Playlist Numero Uno'
+        @parsed_data = {
+          'Playlists' => [
+            {
+              'Name' => @name,
+              'Playlist Items' => @track_ids.collect { |tid|  { 'Track ID' => tid } }
+            }
+          ]
+        }
+        Plist.stubs(:parse_xml).returns(@parsed_data)
+      end
+      
+      it 'should accept a filename' do
+        lambda { PJ::Playlist.import(@filename) }.should_not raise_error(ArgumentError)
+      end
+      
+      it 'should require a filename' do
+        lambda { PJ::Playlist.import }.should raise_error(ArgumentError)
+      end
+      
+      it 'should parse the file contents as a plist' do
+        Plist.expects(:parse_xml).with(@filename).returns(@parsed_data)
+        PJ::Playlist.import(@filename)
+      end
+      
+      it 'should return a playlist' do
+        PJ::Playlist.import(@filename).should be_kind_of(PJ::Playlist)
+      end
+      
+      it 'should set the playlist name' do
+        PJ::Playlist.import(@filename).name.should == @name
+      end
+      
+      it 'should set the playlist tracks' do
+        PJ::Playlist.import(@filename).tracks.should == @track_ids
+      end
+    end
+  end
 end
