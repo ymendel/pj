@@ -22,9 +22,11 @@ module PJ
         playlist = new
         playlist.name   = parsed_playlist['Name']
         playlist.tracks = parsed_playlist['Playlist Items'].collect do |item|
+          track_info = parsed_tracks[item['Track ID'].to_s]
           track = Track.new
-          track.track_id = item['Track ID']
-          track.persistent_id = parsed_tracks[track.track_id.to_s]['Persistent ID']
+          track.track_id      = item['Track ID']
+          track.persistent_id = track_info['Persistent ID']
+          track.location      = track_info['Location']
           track
         end
         playlist
