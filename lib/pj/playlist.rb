@@ -35,6 +35,12 @@ module PJ
       }
     end
     
+    def write(filename)
+      File.open(filename, 'w') do |f|
+        f.puts to_hash.to_plist
+      end
+    end
+    
     class << self
       def tracks
         @tracks ||= {}

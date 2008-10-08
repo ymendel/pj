@@ -189,6 +189,50 @@ describe PJ::Playlist do
     end
   end
   
+  it 'should write itself' do
+    @playlist.should respond_to(:write)
+  end
+  
+  describe 'writing itself' do
+    before :each do
+      @filename = 'test_playlist.xml'
+      @file = stub('file', :puts => nil)
+      File.stubs(:open).yields(@file)
+      @hash = {}
+      @playlist.stubs(:to_hash).returns(@hash)
+      @plist = 'blah blah blah plist stuff here'
+      @hash.stubs(:to_plist).returns(@plist)
+    end
+    
+    it 'should accept a filename' do
+      lambda { @playlist.write(@filename) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require a filename' do
+      lambda { @playlist.write }.should raise_error(ArgumentError)
+    end
+    
+    it 'should open the file for writing' do
+      File.expects(:open).with(@filename, 'w')
+      @playlist.write(@filename)
+    end
+    
+    it 'should get the hash representation of the playlist' do
+      @playlist.expects(:to_hash).returns(@hash)
+      @playlist.write(@filename)
+    end
+    
+    it 'should get the plist representation of the playlist hash' do
+      @hash.expects(:to_plist).returns(@plist)
+      @playlist.write(@filename)
+    end
+    
+    it 'should write the plist representation of the playlist hash to the file' do
+      @file.expects(:puts).with(@plist)
+      @playlist.write(@filename)
+    end
+  end
+  
   describe 'as a class' do
     describe 'handling known tracks' do
       before :each do
