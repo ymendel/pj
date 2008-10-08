@@ -35,6 +35,7 @@ module PJ
           track.track_id      = item['Track ID']
           track.persistent_id = track_info['Persistent ID']
           track.location      = track_info['Location']
+          store_track(track)
           track
         end
         playlist

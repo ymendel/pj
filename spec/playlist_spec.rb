@@ -188,6 +188,12 @@ describe PJ::Playlist do
       it 'should set the locations for the track objects' do
         PJ::Playlist.import(@filename).tracks.collect { |t|  t.location }.should == @locations.values_at(*@track_ids)
       end
+      
+      it 'should store the track objects' do
+        pids = @persistent_ids.values_at(*@track_ids)
+        PJ::Playlist.import(@filename)
+        PJ::Playlist.tracks.values_at(*pids).collect { |t|  t.persistent_id }.should == pids
+      end
     end
   end
 end
