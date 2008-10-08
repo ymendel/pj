@@ -62,6 +62,29 @@ describe PJ::Playlist do
   end
   
   describe 'as a class' do
+    it 'should store known tracks' do
+      PJ::Playlist.should respond_to(:tracks)
+    end
+    
+    describe 'known tracks' do
+      before :each do
+        class << PJ::Playlist
+          attr_writer :tracks
+        end
+      end
+      
+      it 'should make the stored tracks available' do
+        test_tracks = { 1 => 'some track' }
+        PJ::Playlist.tracks = test_tracks
+        PJ::Playlist.tracks.should == test_tracks
+      end
+      
+      it 'should default to an empty hash' do
+        PJ::Playlist.tracks = nil
+        PJ::Playlist.tracks.should == {}
+      end
+    end
+    
     it 'should import a file' do
       PJ::Playlist.should respond_to(:import)
     end

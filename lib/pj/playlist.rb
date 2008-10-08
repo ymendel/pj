@@ -15,6 +15,10 @@ module PJ
     end
     
     class << self
+      def tracks
+        @tracks || {}
+      end
+      
       def import(filename)
         parsed = Plist.parse_xml(filename)
         parsed_playlist = parsed['Playlists'].first
