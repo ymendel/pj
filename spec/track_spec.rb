@@ -8,4 +8,10 @@ describe PJ::Track do
   it 'should have a track ID' do
     @track.should respond_to(:track_id)
   end
+  
+  it 'should allow setting the track ID' do
+    tid = 123
+    @track.track_id = tid
+    @track.track_id.should == tid
+  end
 end

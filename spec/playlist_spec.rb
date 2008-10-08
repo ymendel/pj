@@ -9,8 +9,20 @@ describe PJ::Playlist do
     @playlist.should respond_to(:name)
   end
   
+  it 'should allow setting the name' do
+    name = 'super-cool name'
+    @playlist.name = name
+    @playlist.name.should == name
+  end
+  
   it 'should have tracks' do
     @playlist.should respond_to(:tracks)
+  end
+  
+  it 'should allow setting the tracks' do
+    tracks = [1, 5, 90, 3, 200]
+    @playlist.tracks = tracks
+    @playlist.tracks.should == tracks
   end
   
   describe 'when initialized' do
