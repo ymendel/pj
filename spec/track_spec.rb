@@ -24,4 +24,14 @@ describe PJ::Track do
     @track.persistent_id = pid
     @track.persistent_id.should == pid
   end
+  
+  it 'should have a location' do
+    @track.should respond_to(:location)
+  end
+  
+  it 'should allow setting the persistent ID' do
+    loc = 'file://path/to/dir/and/file.mp3'
+    @track.location = loc
+    @track.location.should == loc
+  end
 end
