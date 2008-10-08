@@ -62,26 +62,60 @@ describe PJ::Playlist do
   end
   
   describe 'as a class' do
-    it 'should store known tracks' do
-      PJ::Playlist.should respond_to(:tracks)
-    end
-    
-    describe 'known tracks' do
+    describe 'handling known tracks' do
       before :each do
         class << PJ::Playlist
           attr_writer :tracks
         end
       end
       
-      it 'should make the stored tracks available' do
-        test_tracks = { 1 => 'some track' }
-        PJ::Playlist.tracks = test_tracks
-        PJ::Playlist.tracks.should == test_tracks
+      it 'should have known tracks' do
+        PJ::Playlist.should respond_to(:tracks)
       end
       
-      it 'should default to an empty hash' do
+      it 'should return known tracks' do
+        tracks = { '1' => 'some track', 'five' => 'track five'}
+        PJ::Playlist.tracks = tracks
+        PJ::Playlist.tracks.should == tracks
+      end
+      
+      it 'should default known tracks to an empty hash' do
         PJ::Playlist.tracks = nil
         PJ::Playlist.tracks.should == {}
+      end
+      
+      it 'should allow for storing a track' do
+        PJ::Playlist.should respond_to(:store_track)
+      end
+      
+      describe 'storing a track' do
+        before :each do
+          @track = PJ::Track.new
+          @track.track_id = 12
+          @track.persistent_id = 'eab3901-do'
+          @track.location = 'file://path/to/file.mp3'
+        end
+        
+        it 'should accept a track' do
+          lambda { PJ::Playlist.store_track(@track) }.should_not raise_error(ArgumentError)
+        end
+        
+        it 'should require a track' do
+          lambda { PJ::Playlist.store_track }.should raise_error(ArgumentError)
+        end
+        
+        it 'should store the track, keyed by persistent ID' do
+          PJ::Playlist.store_track(@track)
+          PJ::Playlist.tracks[@track.persistent_id].should == @track
+        end
+        
+        it 'should not affect other tracks' do
+          tracks = { '1' => 'some track', 'five' => 'track five'}
+          keys = tracks.keys.dup
+          PJ::Playlist.tracks = tracks
+          PJ::Playlist.store_track(@track)
+          PJ::Playlist.tracks.keys.sort.should == (keys + [@track.persistent_id]).sort
+        end
       end
     end
     

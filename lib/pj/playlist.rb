@@ -16,7 +16,11 @@ module PJ
     
     class << self
       def tracks
-        @tracks || {}
+        @tracks ||= {}
+      end
+      
+      def store_track(track)
+        tracks[track.persistent_id] = track
       end
       
       def import(filename)
