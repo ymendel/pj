@@ -11,6 +11,9 @@ module PJ
     end
     
     def <<(track)
+      if stored_track = self.class.tracks[track]
+        track = stored_track
+      end
       @tracks << track
     end
     

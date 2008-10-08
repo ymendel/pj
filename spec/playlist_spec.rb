@@ -59,6 +59,17 @@ describe PJ::Playlist do
       @playlist << @track
       @playlist.tracks.should == tracks + [@track]
     end
+    
+    it 'should add a stored track if given a known persistent ID' do
+      track = PJ::Track.new
+      track.track_id = 12
+      track.persistent_id = 'eab3901-do'
+      track.location = 'file://path/to/file.mp3'
+      PJ::Playlist.store_track(track)
+      
+      @playlist << track.persistent_id
+      @playlist.tracks.should include(track)
+    end
   end
   
   describe 'as a class' do
