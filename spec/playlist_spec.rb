@@ -120,6 +120,12 @@ describe PJ::Playlist do
           @playlist_data['Name'].should == @playlist.name
         end
         
+        it 'should use the string representation of the name' do
+          @playlist.name = 5
+          @playlist_data = @playlist.to_hash['Playlists'].first
+          @playlist_data['Name'].should == @playlist.name.to_s
+        end
+        
         it 'should contain its tracks' do
           @playlist_data.should include('Playlist Items')
         end

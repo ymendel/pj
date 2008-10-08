@@ -29,7 +29,7 @@ module PJ
       {
         'Tracks' => tracks_hash,
         'Playlists' => [{
-          'Name' => name,
+          'Name' => name.to_s,
           'Playlist Items' => tracks.collect { |t|  { 'Track ID' => t.track_id } }
         }]
       }
