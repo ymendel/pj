@@ -91,8 +91,12 @@ describe PJ::Playlist do
         PJ::Playlist.import(@filename).name.should == @name
       end
       
-      it 'should set the playlist tracks' do
-        PJ::Playlist.import(@filename).tracks.should == @track_ids
+      it 'should set the playlist tracks to track objects' do
+        PJ::Playlist.import(@filename).tracks.all? { |t|  t.is_a?(PJ::Track) }.should == true
+      end
+      
+      it 'should put the track objects in the order from the file' do
+        PJ::Playlist.import(@filename).tracks.collect { |t|  t.track_id }.should == @track_ids
       end
     end
   end

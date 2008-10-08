@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'plist'
+require 'pj/track'
 
 module PJ
   class Playlist
@@ -19,7 +20,7 @@ module PJ
         parsed_playlist = parsed['Playlists'].first
         playlist = new
         playlist.name   = parsed_playlist['Name']
-        playlist.tracks = parsed_playlist['Playlist Items'].collect { |item|  item['Track ID'] }
+        playlist.tracks = parsed_playlist['Playlist Items'].collect { |item|  track = Track.new; track.track_id = item['Track ID']; track }
         playlist
       end
     end
