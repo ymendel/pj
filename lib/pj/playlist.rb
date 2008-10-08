@@ -17,6 +17,24 @@ module PJ
       @tracks << track
     end
     
+    def to_hash
+      tracks_hash = {}
+      tracks.each do |t|
+        tracks_hash[t.track_id.to_s] = {
+          'Track ID'      => t.track_id,
+          'Persistent ID' => t.persistent_id,
+          'Location'      => t.location
+        }
+      end
+      {
+        'Tracks' => tracks_hash,
+        'Playlists' => [{
+          'Name' => name,
+          'Playlist Items' => tracks.collect { |t|  { 'Track ID' => t.track_id } }
+        }]
+      }
+    end
+    
     class << self
       def tracks
         @tracks ||= {}

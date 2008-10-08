@@ -72,6 +72,117 @@ describe PJ::Playlist do
     end
   end
   
+  it 'should have a hash representation' do
+    @playlist.should respond_to(:to_hash)
+  end
+  
+  describe 'hash representation' do
+    before :each do
+      @playlist.name = 'Super-Duper-Cool-Awesome'
+      @tracks = Array.new(5) do |i|
+        track = PJ::Track.new
+        track.track_id = i + 1
+        track.persistent_id = "persist_#{i+1}_ola"
+        track.location = "file://path/to/track_#{i+1}_file.mp3"
+        track
+      end
+      @playlist.tracks = @tracks
+    end
+    
+    it 'should return a hash' do
+      @playlist.to_hash.should be_kind_of(Hash)
+    end
+    
+    it 'should include a playlist section' do
+      @playlist.to_hash.should include('Playlists')
+    end
+    
+    describe 'playlist section' do
+      before :each do
+        @playlist_section = @playlist.to_hash['Playlists']
+      end
+      
+      it 'should be an array' do
+        @playlist_section.should be_kind_of(Array)
+      end
+      
+      it 'should contain one hash' do
+        @playlist_section.length.should == 1
+        @playlist_section.first.should be_kind_of(Hash)
+      end
+      
+      describe 'playlist data' do
+        before :each do
+          @playlist_data = @playlist_section.first
+        end
+        
+        it 'should contain its name' do
+          @playlist_data['Name'].should == @playlist.name
+        end
+        
+        it 'should contain its tracks' do
+          @playlist_data.should include('Playlist Items')
+        end
+        
+        describe 'playlist items' do
+          before :each do
+            @playlist_items = @playlist_data['Playlist Items']
+          end
+          
+          it 'should be an array' do
+            @playlist_items.should be_kind_of(Array)
+          end
+          
+          it "should contain { 'Track ID' => track_id } hashes for the tracks" do
+            track_hashes = @playlist.tracks.collect { |t|  { 'Track ID' => t.track_id } }
+            @playlist_items.should == track_hashes
+          end
+        end
+      end
+    end
+    
+    it 'should include a track section' do
+      @playlist.to_hash.should include('Tracks')
+    end
+    
+    describe 'track section' do
+      before :each do
+        @track_section = @playlist.to_hash['Tracks']
+      end
+      
+      it 'should be a hash' do
+        @track_section.should be_kind_of(Hash)
+      end
+      
+      it 'should have a key for each track ID (as a string)' do
+        @track_section.keys.sort.should == @tracks.collect { |t|  t.track_id.to_s }
+      end
+      
+      describe 'data for a single track' do
+        before :each do
+          @track = @tracks.first
+          @track_data = @playlist.to_hash['Tracks'][@track.track_id.to_s]
+        end
+        
+        it 'should be a hash' do
+          @track_data.should be_kind_of(Hash)
+        end
+        
+        it 'should include the track ID' do
+          @track_data['Track ID'].should == @track.track_id
+        end
+        
+        it 'should include the persistent ID' do
+          @track_data['Persistent ID'].should == @track.persistent_id
+        end
+        
+        it 'should include the location' do
+          @track_data['Location'].should == @track.location
+        end
+      end
+    end
+  end
+  
   describe 'as a class' do
     describe 'handling known tracks' do
       before :each do
