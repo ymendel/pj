@@ -9,9 +9,9 @@ module PJ
   class << self
     attr_reader :generator
     
-    def import(*files)
+    def load(*files)
       raise ArgumentError, 'at least one file needed' if files.empty?
-      files.collect { |f|  PJ::Playlist.import(f) }
+      files.collect { |f|  PJ::Playlist.load(f) }
     end
     
     def analyze(*playlists)

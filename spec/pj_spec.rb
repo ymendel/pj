@@ -1,41 +1,41 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe PJ do
-  it 'should import files' do
-    PJ.should respond_to(:import)
+  it 'should load files' do
+    PJ.should respond_to(:load)
   end
   
-  describe 'importing files' do
+  describe 'loading files' do
     before :each do
       @filenames = ['blah_blah_playlist.xml', 'something_else.xml', 'yet_another.xml']
-      PJ::Playlist.stubs(:import)
+      PJ::Playlist.stubs(:load)
     end
     
     it 'should accept a filename' do
-      lambda { PJ.import(@filenames.first) }.should_not raise_error(ArgumentError)
+      lambda { PJ.load(@filenames.first) }.should_not raise_error(ArgumentError)
     end
     
     it 'should accept multiple filenames' do
-      lambda { PJ.import(*@filenames) }.should_not raise_error(ArgumentError)
+      lambda { PJ.load(*@filenames) }.should_not raise_error(ArgumentError)
     end
     
     it 'should require at least one filename' do
-      lambda { PJ.import }.should raise_error(ArgumentError)
+      lambda { PJ.load }.should raise_error(ArgumentError)
     end
     
-    it 'should import playlists for the given filenames' do
+    it 'should load playlists for the given filenames' do
       @filenames.each do |f|
-        PJ::Playlist.expects(:import).with(f)
+        PJ::Playlist.expects(:load).with(f)
       end
-      PJ.import(*@filenames)
+      PJ.load(*@filenames)
     end
     
-    it 'should return the imported playlists' do
+    it 'should return the loaded playlists' do
       playlists = Array.new(@filenames.length) { |i|  stub("playlist #{i+1}") }
       @filenames.zip(playlists).each do |f, play|
-        PJ::Playlist.stubs(:import).with(f).returns(play)
+        PJ::Playlist.stubs(:load).with(f).returns(play)
       end
-      PJ.import(*@filenames).should == playlists
+      PJ.load(*@filenames).should == playlists
     end
   end
   

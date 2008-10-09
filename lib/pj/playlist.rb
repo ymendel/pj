@@ -50,7 +50,7 @@ module PJ
         tracks[track.persistent_id] = track
       end
       
-      def import(filename)
+      def load(filename)
         parsed = Plist.parse_xml(filename)
         parsed_playlist = parsed['Playlists'].first
         parsed_tracks   = parsed['Tracks']

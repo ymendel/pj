@@ -291,11 +291,11 @@ describe PJ::Playlist do
       end
     end
     
-    it 'should import a file' do
-      PJ::Playlist.should respond_to(:import)
+    it 'should load a file' do
+      PJ::Playlist.should respond_to(:load)
     end
     
-    describe 'importing a file' do
+    describe 'loading a file' do
       before :each do
         @filename = 'test_playlist.xml'
         @track_ids = [123, 456, 124, 987, 567, 321, 506]
@@ -325,45 +325,45 @@ describe PJ::Playlist do
       end
       
       it 'should accept a filename' do
-        lambda { PJ::Playlist.import(@filename) }.should_not raise_error(ArgumentError)
+        lambda { PJ::Playlist.load(@filename) }.should_not raise_error(ArgumentError)
       end
       
       it 'should require a filename' do
-        lambda { PJ::Playlist.import }.should raise_error(ArgumentError)
+        lambda { PJ::Playlist.load }.should raise_error(ArgumentError)
       end
       
       it 'should parse the file contents as a plist' do
         Plist.expects(:parse_xml).with(@filename).returns(@parsed_data)
-        PJ::Playlist.import(@filename)
+        PJ::Playlist.load(@filename)
       end
       
       it 'should return a playlist' do
-        PJ::Playlist.import(@filename).should be_kind_of(PJ::Playlist)
+        PJ::Playlist.load(@filename).should be_kind_of(PJ::Playlist)
       end
       
       it 'should set the playlist name' do
-        PJ::Playlist.import(@filename).name.should == @name
+        PJ::Playlist.load(@filename).name.should == @name
       end
       
       it 'should set the playlist tracks to track objects' do
-        PJ::Playlist.import(@filename).tracks.all? { |t|  t.is_a?(PJ::Track) }.should == true
+        PJ::Playlist.load(@filename).tracks.all? { |t|  t.is_a?(PJ::Track) }.should == true
       end
       
       it 'should put the track objects in the order from the file' do
-        PJ::Playlist.import(@filename).tracks.collect { |t|  t.track_id }.should == @track_ids
+        PJ::Playlist.load(@filename).tracks.collect { |t|  t.track_id }.should == @track_ids
       end
       
       it 'should set the persistent IDs for the track objects' do
-        PJ::Playlist.import(@filename).tracks.collect { |t|  t.persistent_id }.should == @persistent_ids.values_at(*@track_ids)
+        PJ::Playlist.load(@filename).tracks.collect { |t|  t.persistent_id }.should == @persistent_ids.values_at(*@track_ids)
       end
       
       it 'should set the locations for the track objects' do
-        PJ::Playlist.import(@filename).tracks.collect { |t|  t.location }.should == @locations.values_at(*@track_ids)
+        PJ::Playlist.load(@filename).tracks.collect { |t|  t.location }.should == @locations.values_at(*@track_ids)
       end
       
       it 'should store the track objects' do
         pids = @persistent_ids.values_at(*@track_ids)
-        PJ::Playlist.import(@filename)
+        PJ::Playlist.load(@filename)
         PJ::Playlist.tracks.values_at(*pids).collect { |t|  t.persistent_id }.should == pids
       end
     end
