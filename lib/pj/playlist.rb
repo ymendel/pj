@@ -36,8 +36,15 @@ module PJ
     end
     
     def write(filename)
+      h = to_hash
       File.open(filename, 'w') do |f|
-        f.puts to_hash.to_plist
+        f.puts Plist::Emit.wrap([
+          "<dict>",
+          "<key>Tracks</key>",
+          h['Tracks'].to_plist(false),
+          "<key>Playlists</key>",
+          h['Playlists'].to_plist(false),
+          "</dict>"].join("\n"))
       end
     end
     

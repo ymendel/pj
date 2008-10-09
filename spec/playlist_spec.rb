@@ -198,10 +198,14 @@ describe PJ::Playlist do
       @filename = 'test_playlist.xml'
       @file = stub('file', :puts => nil)
       File.stubs(:open).yields(@file)
-      @hash = {}
+      @track_data = {}
+      @playlist_data = []
+      @hash = { 'Tracks' => @track_data, 'Playlists' => @playlist_data }
       @playlist.stubs(:to_hash).returns(@hash)
-      @plist = 'blah blah blah plist stuff here'
-      @hash.stubs(:to_plist).returns(@plist)
+      @track_plist = 'track plist format'
+      @track_data.stubs(:to_plist).returns(@track_plist)
+      @playlist_plist = 'playlist plist format'
+      @playlist_data.stubs(:to_plist).returns(@playlist_plist)
     end
     
     it 'should accept a filename' do
@@ -222,13 +226,25 @@ describe PJ::Playlist do
       @playlist.write(@filename)
     end
     
-    it 'should get the plist representation of the playlist hash' do
-      @hash.expects(:to_plist).returns(@plist)
+    it "should get the plist representation of the playlist hash's track data" do
+      @track_data.expects(:to_plist).with(false).returns('')
       @playlist.write(@filename)
     end
     
-    it 'should write the plist representation of the playlist hash to the file' do
-      @file.expects(:puts).with(@plist)
+    it "should get the plist representation of the playlist hash's playlist data" do
+      @playlist_data.expects(:to_plist).with(false).returns('')
+      @playlist.write(@filename)
+    end
+    
+    it "should wrap the plist representations of the playlist hash's track and playlist data, track data first" do
+      Plist::Emit.expects(:wrap).with(["<dict>", "<key>Tracks</key>", @track_plist, "<key>Playlists</key>", @playlist_plist, "</dict>"].join("\n")).returns('')
+      @playlist.write(@filename)
+    end
+    
+    it 'should write the plist data to the file' do
+      plist = 'wrapped plist formatted data'
+      Plist::Emit.stubs(:wrap).returns(plist)
+      @file.expects(:puts).with(plist)
       @playlist.write(@filename)
     end
   end
