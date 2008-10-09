@@ -38,4 +38,53 @@ describe PJ do
       PJ.import(*@filenames).should == playlists
     end
   end
+  
+  it 'should have a generator' do
+    PJ.should respond_to(:generator)
+  end
+  
+  it 'should analyze playlists' do
+    PJ.should respond_to(:analyze)
+  end
+  
+  describe 'analyzing playlists' do
+    before :each do
+      @playlists = Array.new(3) do |i|
+        tracks = Array.new(3) { |j|  stub("track #{i+1}-#{j+1}", :persistent_id => "persist_#{i+1}-#{j+1}_ola") }
+        stub("playlist #{i+1}", :tracks => tracks)
+      end
+      @generator = Markov.new
+      Markov.stubs(:new).returns(@generator)
+    end
+    
+    it 'should accept a playlist' do
+      lambda { PJ.analyze(@playlists.first) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should accept multiple playlists' do
+      lambda { PJ.analyze(*@playlists) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require at least one playlist' do
+      lambda { PJ.analyze }.should raise_error(ArgumentError)
+    end
+    
+    it 'should create a new Markov object' do
+      Markov.expects(:new).returns(@generator)
+      PJ.analyze(*@playlists)
+    end
+    
+    it 'should set the generator' do
+      PJ.analyze(*@playlists)
+      PJ.generator.should == @generator
+    end
+    
+    it "should add each playlist's tracks' persistent IDs to the generator" do
+      @playlists.each do |play|
+        pids = play.tracks.collect { |t|  t.persistent_id }
+        @generator.expects(:add).with(*pids)
+      end
+      PJ.analyze(*@playlists)
+    end
+  end
 end
