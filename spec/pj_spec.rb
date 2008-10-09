@@ -123,4 +123,42 @@ describe PJ do
       PJ.import(*@filenames)
     end
   end
+  
+  it 'should generate a playlist' do
+    PJ.should respond_to(:generate_playlist)
+  end
+  
+  describe 'generating a playlist' do
+    before :each do
+      @sequence = [5, 10, 2]
+      @generator = stub('generator', :generate => @sequence)
+      PJ.stubs(:generator).returns(@generator)
+      @playlist = stub('playlist', :<< => nil)
+      PJ::Playlist.stubs(:new).returns(@playlist)
+    end
+    
+    it 'should access the generator' do
+      PJ.expects(:generator).returns(@generator)
+      PJ.generate_playlist
+    end
+    
+    it 'should have the generator generate a sequence' do
+      @generator.expects(:generate).returns(@sequence)
+      PJ.generate_playlist
+    end
+    
+    it 'should make a new playlist' do
+      PJ::Playlist.expects(:new).returns(@playlist)
+      PJ.generate_playlist
+    end
+    
+    it 'should append each element of the sequence to the playlist' do
+      @sequence.each { |elem|  @playlist.expects(:<<).with(elem) }
+      PJ.generate_playlist
+    end
+    
+    it 'should return the playlist' do
+      PJ.generate_playlist.should == @playlist
+    end
+  end
 end

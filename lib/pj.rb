@@ -27,5 +27,11 @@ module PJ
       raise ArgumentError, 'at least one file needed' if files.empty?
       analyze(*load(*files))
     end
+    
+    def generate_playlist
+      playlist = PJ::Playlist.new
+      generator.generate.each { |elem|  playlist << elem }
+      playlist
+    end
   end
 end
