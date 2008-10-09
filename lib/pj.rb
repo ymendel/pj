@@ -11,7 +11,7 @@ module PJ
     
     def load(*files)
       raise ArgumentError, 'at least one file needed' if files.empty?
-      files.collect { |f|  PJ::Playlist.load(f) }
+      files.collect { |f|  Playlist.load(f) }
     end
     
     def analyze(*playlists)
@@ -29,7 +29,7 @@ module PJ
     end
     
     def generate_playlist
-      playlist = PJ::Playlist.new
+      playlist = Playlist.new
       generator.generate.each { |elem|  playlist << elem }
       playlist
     end
