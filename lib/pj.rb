@@ -22,5 +22,10 @@ module PJ
         @generator.add(*pids)
       end
     end
+    
+    def import(*files)
+      raise ArgumentError, 'at least one file needed' if files.empty?
+      analyze(*load(*files))
+    end
   end
 end

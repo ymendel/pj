@@ -87,4 +87,40 @@ describe PJ do
       PJ.analyze(*@playlists)
     end
   end
+  
+  it 'should import files' do
+    PJ.should respond_to(:import)
+  end
+  
+  describe 'importing files' do
+    before :each do
+      @filenames = ['blah_blah_playlist.xml', 'something_else.xml', 'yet_another.xml']
+      PJ.stubs(:load)
+      PJ.stubs(:analyze)
+    end
+    
+    it 'should accept a filename' do
+      lambda { PJ.import(@filenames.first) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should accept multiple filenames' do
+      lambda { PJ.import(*@filenames) }.should_not raise_error(ArgumentError)
+    end
+    
+    it 'should require at least one filename' do
+      lambda { PJ.import }.should raise_error(ArgumentError)
+    end
+    
+    it 'should load the given filenames' do
+      PJ.expects(:load).with(*@filenames)
+      PJ.import(*@filenames)
+    end
+    
+    it 'should analyze the loaded playlists' do
+      playlists = Array.new(@filenames.length) { |i|  stub("playlist #{i+1}") }
+      PJ.stubs(:load).returns(playlists)
+      PJ.expects(:analyze).with(*playlists)
+      PJ.import(*@filenames)
+    end
+  end
 end
