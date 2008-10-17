@@ -29,7 +29,7 @@ describe PJ::Track do
     @track.should respond_to(:location)
   end
   
-  it 'should allow setting the persistent ID' do
+  it 'should allow setting the location' do
     loc = 'file://path/to/dir/and/file.mp3'
     @track.location = loc
     @track.location.should == loc
