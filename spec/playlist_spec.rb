@@ -317,14 +317,17 @@ describe PJ::Playlist do
         @track_ids = [123, 456, 124, 987, 567, 321, 506]
         @persistent_ids = {}
         @locations = {}
+        @names = {}
         @track_info = {}
         @track_ids.each do |tid|
           @persistent_ids[tid] = "EAPERSIST#{tid}ID"
           @locations[tid] = "file://path/to/dir/for/#{tid}/file.mp3"
+          @names[tid] = "The #{tid} Song"
           @track_info[tid.to_s] = {
             'Track ID' => tid,
             'Persistent ID' => @persistent_ids[tid],
-            'Location' => @locations[tid]
+            'Location' => @locations[tid],
+            'Name' => @names[tid]
           }
         end
         @name = 'Test Playlist Numero Uno'
@@ -375,6 +378,10 @@ describe PJ::Playlist do
       
       it 'should set the locations for the track objects' do
         PJ::Playlist.load(@filename).tracks.collect { |t|  t.location }.should == @locations.values_at(*@track_ids)
+      end
+      
+      it 'should set the names for the track objects' do
+        PJ::Playlist.load(@filename).tracks.collect { |t|  t.name }.should == @names.values_at(*@track_ids)
       end
       
       it 'should store the track objects' do

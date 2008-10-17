@@ -69,6 +69,7 @@ module PJ
           track.track_id      = item['Track ID']
           track.persistent_id = track_info['Persistent ID']
           track.location      = track_info['Location']
+          track.name          = track_info['Name']
           store_track(track)
           track
         end
