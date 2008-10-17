@@ -34,4 +34,14 @@ describe PJ::Track do
     @track.location = loc
     @track.location.should == loc
   end
+  
+  it 'should have a name' do
+    @track.should respond_to(:name)
+  end
+  
+  it 'should allow setting the name' do
+    name = 'Best Song Evar'
+    @track.name = name
+    @track.name.should == name
+  end
 end
